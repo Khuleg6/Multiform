@@ -2,12 +2,13 @@
 import { useState } from "react";
 import { FirstStep } from "./component/FirstStep";
 import { SecondStep } from "./component/SecondStep";
+import { ThirdStep } from "./component/ThirdStep";
 
 export default function Home() {
   const [step, setStep] = useState(0);
-  const steps = [FirstStep, SecondStep];
+  const steps = [FirstStep, SecondStep, ThirdStep];
+
   const handleNextStep = () => {
-    console.log("working");
     setStep(step + 1);
   };
   const handlePreviusStep = () => {

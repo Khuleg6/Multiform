@@ -1,8 +1,6 @@
 import { Children } from "react";
 
 export const Button = ({ children, disabled, onClick }) => {
-  console.log("disabled", disabled);
-
   return (
     <button
       onClick={onClick}

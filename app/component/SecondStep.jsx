@@ -3,11 +3,32 @@ import { useState } from "react";
 import { Button } from "./Button";
 import { Textfield } from "./Textfield";
 
-export const SecondStep = (handlePreviusStep) => {
+export const SecondStep = ({ handlePreviusStep }) => {
   const [email, setEmail] = useState("");
   const [phonenumb, setPhonenumb] = useState("");
   const [password, setPassword] = useState("");
   const [confirmpass, setConfirmpass] = useState("");
+
+  const isEmailValid = () => {
+    if (email === "") return "Email cannot be empty...";
+    if (!/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(email))
+      return "Email is wrong.";
+  };
+
+  const isPhoneNumValid = () => {
+    if (phonenumb === "") return "Phone number cannot be empty...";
+    if (!/^[987]\d{7}$/.test(phonenumb))
+      return "Phone number must be start with 7 or up to 9.";
+  };
+  const isPasswordValid = () => {
+    if (password === "") return "Phone number cannot be empty...";
+    if (!/^[987]\d{7}$/.test(password))
+      return "Phone number must be start with 7 or up to 9.";
+  };
+
+  const isHavingError = () => {
+    return isEmailValid() || isPhoneNumValid() || isPasswordValid();
+  };
   return (
     <div className="w-120 min-h-[655px] bg-white rounded-lg p-8 shadow-xl">
       <div className="space-y-2">
@@ -22,6 +43,7 @@ export const SecondStep = (handlePreviusStep) => {
           onChange={(e) => {
             setEmail(e.target.value);
           }}
+          error={isEmailValid}
           required={true}
           label="Email"
           placeholder="John@edu.mn"
@@ -31,6 +53,7 @@ export const SecondStep = (handlePreviusStep) => {
           onChange={(e) => {
             setPhonenumb(e.target.value);
           }}
+          error={isPhoneNumValid}
           required={true}
           label="Enter Phone Number"
           placeholder="88888888"
@@ -40,6 +63,7 @@ export const SecondStep = (handlePreviusStep) => {
           onChange={(e) => {
             setPassword(e.target.value);
           }}
+          error={isPasswordValid}
           required={true}
           label="Password"
         />
@@ -53,9 +77,10 @@ export const SecondStep = (handlePreviusStep) => {
         />
       </div>
       <div className="flex gap-2 my-10">
-        <Button onClick={handlePreviusStep} disabled={true}>
-          Next
+        <Button onClick={handlePreviusStep} disabled={false}>
+          Prev
         </Button>
+        <Button disabled={isHavingError()}>Next</Button>
       </div>
     </div>
   );
