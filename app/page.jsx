@@ -6,7 +6,7 @@ import { ThirdStep } from "./component/ThirdStep";
 import { Complete } from "./component/Complete";
 
 export default function Home() {
-  const [step, setStep] = useState(0);
+  const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
     firstname: "",
     lastname: "",
