@@ -6,7 +6,7 @@ import { ThirdStep } from "./component/ThirdStep";
 import { Complete } from "./component/Complete";
 
 export default function Home() {
-  const [step, setStep] = useState(1);
+  const [step, setStep] = useState(2);
   const [formData, setFormData] = useState({
     firstname: "",
     lastname: "",
@@ -19,7 +19,7 @@ export default function Home() {
     image: "",
   });
   const handleChange = (e) => {
-    const { name, value, type, files } = e.target;
+    const { value, type, files } = e.target;
     const finalValue = type === "file" ? URL.createObjectURL(files[0]) : value;
     setFormData((step) => ({
       ...step,

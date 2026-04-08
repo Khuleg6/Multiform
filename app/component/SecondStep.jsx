@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { Button } from "./Button";
 import { Textfield } from "./Textfield";
+import { isUserLandError } from "next/dist/server/app-render/create-error-handler";
 
 export const SecondStep = ({
   handlePreviusStep,
@@ -10,72 +11,124 @@ export const SecondStep = ({
   handleNextStep,
   currentStep,
   totalSteps,
+  setFormData,
 }) => {
   const { email, phonenumb, password, confirmpass } = formData;
-  const [isSubmited, setIsSubmited] = useState(false);
+  const [errors, setErrors] = useState({
+    emailError: "",
+    phonenumbError: "",
+    passwordError: "",
+    confirmpass: "",
+  });
 
-  const isEmailValid = () => {
-    if (email === "") return "Email cannot be empty...";
-    if (!/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(email))
-      return "Email is wrong.";
-  };
+  let isValid = true;
 
-  const isPhoneNumValid = () => {
-    if (phonenumb === "") return "Phone number cannot be empty...";
-    if (!/^[987]\d{7}$/.test(phonenumb))
-      return "Phone number must be start with 7 or up to 9.";
-  };
-  const isPasswordValid = () => {
-    // 1. Хоосон эсэхийг шалгах
-    if (password === "") return "Password cannot be empty...";
-
-    // 2. Уртыг шалгах (хамгийн багадаа 8 тэмдэгт)
-    if (password.length < 8)
-      return "Password must be at least 8 characters long.";
-
-    // 3. Жижиг үсэг орсон эсэхийг шалгах
-    if (!/[a-z]/.test(password))
-      return "At least one lowercase letter is required.";
-
-    // 4. Том үсэг орсон эсэхийг шалгах
-    if (!/[A-Z]/.test(password))
-      return "At least one uppercase letter is required.";
-
-    // 5. Тоо орсон эсэхийг шалгах
-    if (!/\d/.test(password)) return "At least one number is required.";
-
-    // Хэрэв бүх нөхцөл биелсэн бол юу ч буцаахгүй (undefined)
-    return null;
-  };
-
-  const getErrorMessage = (validationfunc) => {
-    if (!isSubmited) return "";
-    return validationfunc();
-  };
-  const handleNext = () => {
-    setIsSubmited(true);
-    if (
-      !isEmailValid() &&
-      !isPhoneNumValid() &&
-      !isPasswordValid() &&
-      !isConfirmPassValid()
-    ) {
-      handleNextStep();
+  const isEmailValid = (value) => {
+    if (value === "") {
+      setErrors((prev) => ({
+        ...prev,
+        emailError: "Email cannot be emtpy...",
+      }));
+      isValid = false;
+    } else if (!/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(value)) {
+      setErrors((prev) => ({
+        ...prev,
+        emailError: "Email is wrong",
+      }));
+      isValid = false;
+    } else {
+      setErrors((prev) => ({ ...prev, emailError: "" }));
+      isValid = true;
     }
   };
 
-  const isConfirmPassValid = () => {
-    if (confirmpass === "") return "Please confirm your password.";
-    if (confirmpass !== password) return "Passwords do not match.";
-    return null;
+  const isPhoneNumValid = (value) => {
+    if (value === "") {
+      setErrors((prev) => ({
+        ...prev,
+        phonenumbError: "Phone number cannot be empty...",
+      }));
+      isValid = false;
+    } else if (!/^[987]\d{7}$/.test(value)) {
+      setErrors((prev) => ({
+        ...prev,
+        phonenumbError: "Phone number cannot contain special characters",
+      }));
+      isValid = false;
+    } else {
+      setErrors((prev) => ({ ...prev, phonenumbError: "" }));
+      isValid = true;
+    }
   };
+
+  const isPasswordValid = (value) => {
+    if (value === "") {
+      setErrors((prev) => ({
+        ...prev,
+        passwordError: "Password cannot be empty...",
+      }));
+      isValid = false;
+    } else if (value.length < 8) {
+      setErrors((prev) => ({
+        ...prev,
+        passwordErrorError: "Phone number cannot contain special characters",
+      }));
+      isValid = false;
+    } else {
+      setErrors((prev) => ({ ...prev, passwordError: "" }));
+      isValid = true;
+    }
+  };
+  const isConfirmPassValid = (value) => {
+    if (value === "") {
+      setErrors((prev) => ({
+        ...prev,
+        confirmpass: "Password cannot be empty...",
+      }));
+      isValid = false;
+    } else if (value !== password) {
+      // State-д байгаа password-той харьцуулна
+      setErrors((prev) => ({
+        ...prev,
+        confirmpass: "Passwords do not match.",
+      }));
+    } else {
+      // Хэрэв таарч байвал алдааг арилгана
+      setErrors((prev) => ({ ...prev, confirmpass: "" }));
+    }
+  };
+
+  // const isPasswordValid = () => {
+  //   // 1. Хоосон эсэхийг шалгах
+  //   if (password === "") return "Password cannot be empty...";
+
+  //   // 2. Уртыг шалгах (хамгийн багадаа 8 тэмдэгт)
+  //   if (password.length < 8)
+  //     return "Password must be at least 8 characters long.";
+
+  //   // 3. Жижиг үсэг орсон эсэхийг шалгах
+  //   if (!/[a-z]/.test(password))
+  //     return "At least one lowercase letter is required.";
+
+  //   // 4. Том үсэг орсон эсэхийг шалгах
+  //   if (!/[A-Z]/.test(password))
+  //     return "At least one uppercase letter is required.";
+
+  //   // 5. Тоо орсон эсэхийг шалгах
+  //   if (!/\d/.test(password)) return "At least one number is required.";
+
+  //   // Хэрэв бүх нөхцөл биелсэн бол юу ч буцаахгүй (undefined)
+  //   return null;
+  // };
+
+  const handleNext = () => {
+    handleNextStep();
+  };
+
   const isHavingError = () => {
-    return (
-      isEmailValid() ||
-      isPhoneNumValid() ||
-      isPasswordValid() ||
-      isConfirmPassValid()
-    );
+    if (isValid) {
+      handleNext();
+    }
   };
   return (
     <div className="w-120 min-h-[655px] bg-white rounded-lg p-8 shadow-xl">
@@ -89,8 +142,11 @@ export const SecondStep = ({
         <Textfield
           name="email"
           value={email}
-          onChange={handleChange}
-          error={() => getErrorMessage(isEmailValid)}
+          onChange={(e) => {
+            setFormData({ ...formData, email: e.target.value });
+            isEmailValid(e.target.value);
+          }}
+          error={errors.emailError}
           required={true}
           label="Email"
           placeholder="John@edu.mn"
@@ -99,8 +155,11 @@ export const SecondStep = ({
           name="phonenumb"
           type="number"
           value={phonenumb}
-          onChange={handleChange}
-          error={() => getErrorMessage(isPhoneNumValid)}
+          onChange={(e) => {
+            setFormData({ ...formData, phonenumb: e.target.value });
+            isPhoneNumValid(e.target.value);
+          }}
+          error={errors.emailError}
           required={true}
           label="Enter Phone Number"
           placeholder="88888888"
@@ -108,8 +167,11 @@ export const SecondStep = ({
         <Textfield
           name="password"
           value={password}
-          onChange={handleChange}
-          error={() => getErrorMessage(isPasswordValid)}
+          onChange={(e) => {
+            setFormData({ ...formData, password: e.target.value });
+            isPasswordValid(e.target.value);
+          }}
+          error={errors.passwordError}
           required={true}
           label="Password"
           type="password"
@@ -118,8 +180,14 @@ export const SecondStep = ({
         <Textfield
           name="confirmpass"
           value={confirmpass}
-          error={() => getErrorMessage(isConfirmPassValid)}
-          onChange={handleChange}
+          onChange={(e) => {
+            setFormData({
+              ...formData,
+              confirmpass: e.target.value,
+            });
+            isConfirmPassValid(e.target.value);
+          }}
+          error={errors.confirmpass}
           required={true}
           type="password"
           label="Confirm Password"
@@ -146,7 +214,15 @@ export const SecondStep = ({
           </svg>{" "}
           Prev
         </Button>
-        <Button onClick={handleNext}>
+        <Button
+          onClick={() => {
+            isEmailValid(email);
+            isPhoneNumValid(phonenumb);
+            isPasswordValid(password);
+            isConfirmPassValid(confirmpass);
+            isHavingError();
+          }}
+        >
           Continue {currentStep}/{totalSteps}
           <svg
             xmlns="http://www.w3.org/2000/svg"

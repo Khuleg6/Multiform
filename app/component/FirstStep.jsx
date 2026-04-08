@@ -21,8 +21,8 @@ export const FirstStep = ({
 
   let isValid = true;
 
-  const isFirstNameValid = (value) => {
-    if (value === "") {
+  const isFirstNameValid = (prev) => {
+    if (prev === "") {
       setErrors((prev) => ({
         ...prev,
         firstnameError: "First name cannot be empty...",
