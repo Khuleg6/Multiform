@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { use, useState } from "react";
 import { Textfield } from "./Textfield";
 import { Button } from "./Button";
 import { Imgfield } from "./Imgfield";
@@ -11,8 +11,46 @@ export const ThirdStep = ({
   handleNextStep,
   currentStep,
   totalSteps,
+  setFormData,
 }) => {
   const { birthday, image } = formData;
+  const [errors, setErrors] = useState({
+    birthdayerror: "",
+    imageerror: "",
+  });
+  let isValid = true;
+  const isBirthdayErrorValid = (value) => {
+    if (value === "") {
+      setErrors((prev) => ({
+        ...prev,
+        birthdayerror: "Image cannot be empty",
+      }));
+      isValid = false;
+    } else {
+      setErrors((prev) => ({ ...prev, birthdayerror: "" }));
+      isValid = true;
+    }
+  };
+  const isimageErrorValid = (value) => {
+    if (value === "") {
+      setErrors((prev) => ({
+        ...prev,
+        imageerror: "Image cannot be empty",
+      }));
+      isValid = false;
+    } else {
+      setErrors((prev) => ({ ...prev, imageerror: "" }));
+      isValid = true;
+    }
+  };
+  const isHavingError = () => {
+    if (isValid) {
+      handleNext();
+    }
+  };
+  const handleNext = () => {
+    handleNextStep();
+  };
 
   return (
     <div className="w-120 min-h-[655px] bg-white rounded-lg p-8 shadow-xl">
@@ -27,7 +65,10 @@ export const ThirdStep = ({
           type="date"
           name="birthday"
           value={birthday}
-          onChange={handleChange}
+          onChange={(e) => {
+            setFormData({ ...formData, birthday: e.target.value });
+          }}
+          error={errors.birthdayerror}
           required={true}
           label="Date of Birth"
         />
@@ -35,6 +76,10 @@ export const ThirdStep = ({
           name="image"
           value={image}
           handleChange={handleChange}
+          onChange={(e) => {
+            setFormData({ ...formData, image: e.target.value });
+          }}
+          error={errors.imageerror}
           required={true}
           label="Profile image"
           handleRemoveImage={() => {
@@ -44,8 +89,11 @@ export const ThirdStep = ({
         />
       </div>
 
-      <div className="flex gap-2 my-10">
-        <Button className=" h-full w-full" onClick={handlePreviusStep}>
+      <div className="flex gap-2 my-10 mt-[80px]">
+        <Button
+          className="bg-white text-black border border-gray-200 w-[128px] hover:bg-gray-200]"
+          onClick={handlePreviusStep}
+        >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="24"
@@ -60,7 +108,14 @@ export const ThirdStep = ({
           </svg>{" "}
           Prev
         </Button>
-        <Button onClick={handleNextStep}>
+        <Button
+          className="text-white hover:bg-gray-600 w-[280px]"
+          onClick={() => {
+            isBirthdayErrorValid(birthday);
+            isimageErrorValid(image);
+            isHavingError();
+          }}
+        >
           Complete {currentStep}/{totalSteps}{" "}
           <svg
             xmlns="http://www.w3.org/2000/svg"

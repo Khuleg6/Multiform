@@ -21,8 +21,8 @@ export const FirstStep = ({
 
   let isValid = true;
 
-  const isFirstNameValid = (prev) => {
-    if (prev === "") {
+  const isFirstNameValid = (value) => {
+    if (value === "") {
       setErrors((prev) => ({
         ...prev,
         firstnameError: "First name cannot be empty...",
@@ -133,9 +133,9 @@ export const FirstStep = ({
           placeholder="Johndoe..."
         />
       </div>
-      <div className="flex gap-2 my-10">
+      <div className="flex gap-2 my-10 pt-[110px]">
         <Button
-          className="text-white"
+          className="text-white hover:bg-gray-600 w-full"
           onClick={() => {
             isFirstNameValid(firstname);
             isLastNameValid(lastname);

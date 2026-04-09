@@ -19,7 +19,7 @@ export default function Home() {
     image: "",
   });
   const handleChange = (e) => {
-    const { value, type, files } = e.target;
+    const { name, value, type, files } = e.target;
     const finalValue = type === "file" ? URL.createObjectURL(files[0]) : value;
     setFormData((step) => ({
       ...step,

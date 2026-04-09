@@ -159,7 +159,7 @@ export const SecondStep = ({
             setFormData({ ...formData, phonenumb: e.target.value });
             isPhoneNumValid(e.target.value);
           }}
-          error={errors.emailError}
+          error={errors.phonenumbError}
           required={true}
           label="Enter Phone Number"
           placeholder="88888888"
@@ -194,9 +194,9 @@ export const SecondStep = ({
           placeholder="********"
         />
       </div>
-      <div className="flex gap-2 my-10">
+      <div className="flex gap-2 my-10 mt-[70px]">
         <Button
-          className="bg-white text-black border-gray-300"
+          className="bg-white text-black border border-gray-200 w-[128px] hover:bg-gray-200]"
           onClick={handlePreviusStep}
           disabled={false}
         >
@@ -215,6 +215,7 @@ export const SecondStep = ({
           Prev
         </Button>
         <Button
+          className="text-white hover:bg-gray-600 w-[280px]"
           onClick={() => {
             isEmailValid(email);
             isPhoneNumValid(phonenumb);
