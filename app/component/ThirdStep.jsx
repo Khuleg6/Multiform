@@ -23,7 +23,7 @@ export const ThirdStep = ({
     if (value === "") {
       setErrors((prev) => ({
         ...prev,
-        birthdayerror: "Image cannot be empty",
+        birthdayerror: "Birthday cannot be empty",
       }));
       isValid = false;
     } else {
